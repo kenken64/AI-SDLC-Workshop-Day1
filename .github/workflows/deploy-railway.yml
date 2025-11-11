@@ -56,11 +56,7 @@ jobs:
 
           # Write token to Railway's expected location
           # Railway CLI reads from ~/.railway/config.json in JSON format
-          cat > ~/.railway/config.json << EOF
-{
-  "token": "$RAILWAY_TOKEN"
-}
-EOF
+          echo "{\"token\": \"$RAILWAY_TOKEN\"}" > ~/.railway/config.json
 
           echo "📝 Railway config created with token"
 
