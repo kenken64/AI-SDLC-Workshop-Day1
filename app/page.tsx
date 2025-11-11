@@ -69,7 +69,7 @@ interface Todo {
 }
 
 export default function Home() {
-  const { permission, isEnabled, requestPermission } = useNotifications();
+  const { permission, isEnabled, isMuted, requestPermission, toggleMute } = useNotifications();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState('');
   const [newDueDate, setNewDueDate] = useState('');
@@ -985,7 +985,7 @@ export default function Home() {
               </button>
 
               {/* Notification status */}
-              {!isEnabled && (
+              {permission !== 'granted' && (
                 <button
                   onClick={requestPermission}
                   className="px-3 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
@@ -994,10 +994,23 @@ export default function Home() {
                   🔔
                 </button>
               )}
-              {isEnabled && (
-                <span className="px-2 py-2 text-green-600 dark:text-green-400 text-xl" title="Notifications enabled">
+              {permission === 'granted' && !isMuted && (
+                <button
+                  onClick={toggleMute}
+                  className="px-3 py-2 text-green-600 dark:text-green-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm"
+                  title="Notifications enabled - Click to mute"
+                >
                   🔔
-                </span>
+                </button>
+              )}
+              {permission === 'granted' && isMuted && (
+                <button
+                  onClick={toggleMute}
+                  className="px-3 py-2 text-gray-400 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-sm"
+                  title="Notifications muted - Click to unmute"
+                >
+                  🔕
+                </button>
               )}
 
               {/* Logout button */}

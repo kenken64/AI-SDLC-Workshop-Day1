@@ -29,13 +29,11 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
       - name: Deploy to Railway
-        run: railway up --service ${{ secrets.RAILWAY_SERVICE_NAME || 'todo-app' }}
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        uses: railwayapp/railway-deploy-action@v1
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: ${{ secrets.RAILWAY_SERVICE_NAME }}
 
       - name: Deployment Success
         if: success()

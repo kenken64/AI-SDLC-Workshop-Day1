@@ -5,7 +5,16 @@ import { getSingaporeNow, formatSingaporeDate } from '@/lib/timezone';
 
 export function useNotifications() {
   const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [isMuted, setIsMuted] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
+
+  // Toggle mute state
+  const toggleMute = useCallback(() => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    localStorage.setItem('notificationsMuted', JSON.stringify(newMutedState));
+    setIsEnabled(permission === 'granted' && !newMutedState);
+  }, [isMuted, permission]);
 
   // Request notification permission
   const requestPermission = useCallback(async () => {
@@ -17,13 +26,14 @@ export function useNotifications() {
     try {
       const result = await Notification.requestPermission();
       setPermission(result);
-      setIsEnabled(result === 'granted');
+      const mutedState = isMuted;
+      setIsEnabled(result === 'granted' && !mutedState);
       return result === 'granted';
     } catch (error) {
       console.error('Error requesting notification permission:', error);
       return false;
     }
-  }, []);
+  }, [isMuted]);
 
   // Show a browser notification
   const showNotification = useCallback((title: string, options?: NotificationOptions) => {
@@ -100,11 +110,19 @@ export function useNotifications() {
     }
   }, [isEnabled, showNotification]);
 
-  // Initialize permission state
+  // Initialize permission state and load muted preference
   useEffect(() => {
     if ('Notification' in window) {
-      setPermission(Notification.permission);
-      setIsEnabled(Notification.permission === 'granted');
+      const perm = Notification.permission;
+      setPermission(perm);
+
+      // Load muted state from localStorage
+      const storedMuted = localStorage.getItem('notificationsMuted');
+      const mutedState = storedMuted ? JSON.parse(storedMuted) : false;
+      setIsMuted(mutedState);
+
+      // Only enable if permission granted AND not muted
+      setIsEnabled(perm === 'granted' && !mutedState);
     }
   }, []);
 
@@ -124,7 +142,9 @@ export function useNotifications() {
   return {
     permission,
     isEnabled,
+    isMuted,
     requestPermission,
+    toggleMute,
     showNotification,
     checkNotifications,
   };

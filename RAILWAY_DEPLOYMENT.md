@@ -37,9 +37,10 @@ This guide explains how to deploy the Todo App to Railway using GitHub Actions.
    - **Name:** `RAILWAY_TOKEN`
    - **Value:** Your Railway token from step 2
 
-   **Optional:**
    - **Name:** `RAILWAY_SERVICE_NAME`
-   - **Value:** `todo-app` (or your preferred service name)
+   - **Value:** Your Railway service name (e.g., `todo-app`)
+     - Find this in Railway Dashboard → Your Project → Service → Settings → Service ID
+     - Or use the service name you created
 
 ### 4. Deploy Your App
 
@@ -114,6 +115,24 @@ The `railway.json` file specifies:
 - **Restart Policy:** ON_FAILURE with max 10 retries
 
 ## Troubleshooting
+
+### Deployment fails with "Project Token not found"
+
+This is the most common error! It means Railway CLI can't identify which project to deploy to.
+
+**Solution:**
+1. Make sure you've added **both** required secrets to GitHub:
+   - `RAILWAY_TOKEN` (your Railway API token)
+   - `RAILWAY_SERVICE_NAME` (your service name or ID)
+
+2. Verify your Railway service exists:
+   - Go to Railway Dashboard
+   - Check that your project and service are created
+   - Copy the exact service name
+
+3. Check the GitHub Actions workflow is using the official Railway action:
+   - The workflow should use `railwayapp/railway-deploy-action@v1`
+   - Not the manual CLI installation
 
 ### Deployment fails with "RAILWAY_TOKEN not found"
 
