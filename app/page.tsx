@@ -1444,86 +1444,91 @@ export default function Home() {
               <div className="space-y-2">
                 {overdueTodos.map((todo) => (
                   <div key={todo.id} className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <div className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4">
-                      <input
-                        type="checkbox"
-                        checked={!!todo.completed}
-                        onChange={() => toggleTodo(todo.id)}
-                        className="w-5 h-5 text-blue-500 rounded focus:ring-2 focus:ring-blue-500 mt-0.5"
-                      />
-                      <div className="flex-1 min-w-0">
-                        {/* Title */}
-                        <div className="text-gray-800 dark:text-white mb-1 break-words">
-                          {todo.title}
-                        </div>
-
-                        {/* Badges - wrap on multiple lines on mobile */}
-                        <div className="flex flex-wrap gap-1 mb-1">
-                          <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border whitespace-nowrap ${getPriorityBadge(todo.priority).style}`}>
-                            {getPriorityBadge(todo.priority).label}
-                          </span>
-                          {todo.is_recurring && (
-                            <span className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-300 dark:border-purple-700 rounded-full font-semibold whitespace-nowrap" title={`Repeats ${todo.recurrence_pattern}`}>
-                              🔄 {todo.recurrence_pattern}
-                            </span>
-                          )}
-                          {todo.reminder_minutes && (
-                            <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-300 dark:border-green-700 rounded-full font-semibold whitespace-nowrap" title={`Reminder set`}>
-                              🔔 {getReminderLabel(todo.reminder_minutes)}
-                            </span>
-                          )}
-                          {todo.tags && todo.tags.length > 0 && todo.tags.map(tag => (
-                            <span
-                              key={tag.id}
-                              className="text-xs px-2 py-0.5 rounded-full text-white font-medium whitespace-nowrap"
-                              style={{ backgroundColor: tag.color }}
-                              title={tag.name}
-                            >
-                              {tag.name}
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* Due date */}
-                        {todo.due_date && (
-                          <div className={`text-xs sm:text-sm font-medium ${getDateDisplay(todo.due_date)?.color}`}>
-                            {getDateDisplay(todo.due_date)?.text}
+                    {/* Mobile: Buttons below content, Desktop: Buttons on right */}
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 p-3 sm:p-4">
+                      {/* Checkbox and content */}
+                      <div className="flex items-start gap-2 flex-1 min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={!!todo.completed}
+                          onChange={() => toggleTodo(todo.id)}
+                          className="w-5 h-5 text-blue-500 rounded focus:ring-2 focus:ring-blue-500 mt-0.5 flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          {/* Title */}
+                          <div className="text-gray-800 dark:text-white mb-1 break-words">
+                            {todo.title}
                           </div>
-                        )}
-                        {todo.progress && todo.progress.total > 0 && (
-                          <div className="mt-2">
-                            <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 mb-1">
-                              <span>{todo.progress.completed}/{todo.progress.total} subtasks</span>
-                            </div>
-                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                              <div
-                                className="bg-blue-500 dark:bg-blue-400 h-2 rounded-full transition-all"
-                                style={{ width: `${todo.progress.percentage}%` }}
-                              ></div>
-                            </div>
+
+                          {/* Badges - wrap on multiple lines on mobile */}
+                          <div className="flex flex-wrap gap-1 mb-1">
+                            <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border whitespace-nowrap ${getPriorityBadge(todo.priority).style}`}>
+                              {getPriorityBadge(todo.priority).label}
+                            </span>
+                            {todo.is_recurring && (
+                              <span className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border border-purple-300 dark:border-purple-700 rounded-full font-semibold whitespace-nowrap" title={`Repeats ${todo.recurrence_pattern}`}>
+                                🔄 {todo.recurrence_pattern}
+                              </span>
+                            )}
+                            {todo.reminder_minutes && (
+                              <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-300 dark:border-green-700 rounded-full font-semibold whitespace-nowrap" title={`Reminder set`}>
+                                🔔 {getReminderLabel(todo.reminder_minutes)}
+                              </span>
+                            )}
+                            {todo.tags && todo.tags.length > 0 && todo.tags.map(tag => (
+                              <span
+                                key={tag.id}
+                                className="text-xs px-2 py-0.5 rounded-full text-white font-medium whitespace-nowrap"
+                                style={{ backgroundColor: tag.color }}
+                                title={tag.name}
+                              >
+                                {tag.name}
+                              </span>
+                            ))}
                           </div>
-                        )}
+
+                          {/* Due date */}
+                          {todo.due_date && (
+                            <div className={`text-xs sm:text-sm font-medium ${getDateDisplay(todo.due_date)?.color}`}>
+                              {getDateDisplay(todo.due_date)?.text}
+                            </div>
+                          )}
+                          {todo.progress && todo.progress.total > 0 && (
+                            <div className="mt-2">
+                              <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 mb-1">
+                                <span>{todo.progress.completed}/{todo.progress.total} subtasks</span>
+                              </div>
+                              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div
+                                  className="bg-blue-500 dark:bg-blue-400 h-2 rounded-full transition-all"
+                                  style={{ width: `${todo.progress.percentage}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Action buttons - stack on mobile, inline on desktop */}
-                      <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 sm:items-center">
+                      {/* Action buttons - full width on mobile, compact on desktop */}
+                      <div className="flex sm:flex-col gap-2 sm:gap-1 ml-7 sm:ml-0">
                         <button
                           onClick={() => toggleSubtaskExpansion(todo.id)}
-                          className="px-2 py-1 text-xs sm:text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium whitespace-nowrap"
+                          className="flex-1 sm:flex-none px-3 sm:px-2 py-1.5 sm:py-1 text-xs sm:text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium rounded sm:rounded-none bg-gray-100 sm:bg-transparent hover:bg-gray-200 sm:hover:bg-transparent"
+                          title="Toggle subtasks"
                         >
                           {expandedTodos.has(todo.id) ? '▼' : '▶'}
                         </button>
                         <button
                           onClick={() => openEditModal(todo)}
-                          className="px-2 py-1 text-xs sm:text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium whitespace-nowrap"
+                          className="flex-1 sm:flex-none px-3 sm:px-2 py-1.5 sm:py-1 text-xs sm:text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium rounded sm:rounded-none bg-blue-50 sm:bg-transparent hover:bg-blue-100 sm:hover:bg-transparent"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => deleteTodo(todo.id)}
-                          className="px-2 py-1 text-xs sm:text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium whitespace-nowrap"
+                          className="flex-1 sm:flex-none px-3 sm:px-2 py-1.5 sm:py-1 text-xs sm:text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium rounded sm:rounded-none bg-red-50 sm:bg-transparent hover:bg-red-100 sm:hover:bg-transparent"
                         >
-                          Del
+                          Delete
                         </button>
                       </div>
                     </div>
