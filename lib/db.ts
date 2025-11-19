@@ -399,8 +399,15 @@ export const authenticatorDB = {
   },
 
   updateCounter: (credentialId: string, newCounter: number): void => {
+    console.log('[DB] Updating counter for credential:', credentialId, 'from current value to:', newCounter);
     const stmt = db.prepare('UPDATE authenticators SET counter = ? WHERE credential_id = ?');
-    stmt.run(newCounter, credentialId);
+    const result = stmt.run(newCounter, credentialId);
+    console.log('[DB] Counter update affected rows:', result.changes);
+
+    // Verify the update
+    const verify = db.prepare('SELECT counter FROM authenticators WHERE credential_id = ?');
+    const updated = verify.get(credentialId) as { counter: number } | undefined;
+    console.log('[DB] Counter after update:', updated?.counter);
   }
 };
 

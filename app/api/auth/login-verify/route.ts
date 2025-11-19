@@ -45,6 +45,11 @@ export async function POST(request: NextRequest) {
         // Get origin from request
         const origin = request.headers.get('origin') || `${request.nextUrl.protocol}//${request.nextUrl.host}`;
 
+        console.log('Verifying authentication with counter:', singleAuth.counter);
+        console.log('Expected challenge:', challenge);
+        console.log('Expected origin:', origin);
+        console.log('Expected RPID:', rpID);
+
         const verification = await verifyAuthenticationResponse({
           response: body,
           expectedChallenge: challenge,
@@ -58,11 +63,16 @@ export async function POST(request: NextRequest) {
           requireUserVerification: false,
         });
 
+        console.log('Verification result:', verification.verified);
+        console.log('New counter:', verification.authenticationInfo.newCounter);
+
         if (!verification.verified) {
+          console.error('Verification failed - details:', verification);
           return NextResponse.json({ error: 'Verification failed' }, { status: 400 });
         }
 
         // Update counter
+        console.log('Updating counter for credential:', singleAuth.credential_id, 'to', verification.authenticationInfo.newCounter);
         authenticatorDB.updateCounter(singleAuth.credential_id, verification.authenticationInfo.newCounter);
 
         // Create session
@@ -82,6 +92,11 @@ export async function POST(request: NextRequest) {
     // Get origin from request
     const origin = request.headers.get('origin') || `${request.nextUrl.protocol}//${request.nextUrl.host}`;
 
+    console.log('Verifying authentication (matched) with counter:', authenticator.counter);
+    console.log('Expected challenge:', challenge);
+    console.log('Expected origin:', origin);
+    console.log('Expected RPID:', rpID);
+
     const verification = await verifyAuthenticationResponse({
       response: body,
       expectedChallenge: challenge,
@@ -95,11 +110,16 @@ export async function POST(request: NextRequest) {
       requireUserVerification: false,
     });
 
+    console.log('Verification result (matched):', verification.verified);
+    console.log('New counter (matched):', verification.authenticationInfo.newCounter);
+
     if (!verification.verified) {
+      console.error('Verification failed (matched) - details:', verification);
       return NextResponse.json({ error: 'Verification failed' }, { status: 400 });
     }
 
     // Update counter
+    console.log('Updating counter for credential:', authenticator.credential_id, 'to', verification.authenticationInfo.newCounter);
     authenticatorDB.updateCounter(authenticator.credential_id, verification.authenticationInfo.newCounter);
 
     // Create session
